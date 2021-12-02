@@ -1,0 +1,63 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			// Part 1
+			ulong position = 0, depth = 0;
+			foreach (string instruction in input)
+			{
+				string[] t = instruction.Split(' ');
+				switch (t[0])
+				{
+					case "forward":
+						position += ulong.Parse(t[1]);
+						break;
+					case "down":
+						depth += ulong.Parse(t[1]);
+						break;
+					case "up":
+						depth -= ulong.Parse(t[1]);
+						break;
+				}
+			}
+			Console.WriteLine("Part 1: " + position * depth);
+
+
+			// Part 2
+			ulong aim = 0;
+			position = 0;
+			depth = 0;
+			foreach (string instruction in input)
+			{
+				string[] t = instruction.Split(' ');
+				switch (t[0])
+				{
+					case "forward":
+						position += ulong.Parse(t[1]);
+						depth += aim * ulong.Parse(t[1]);
+						break;
+					case "down":
+						aim += ulong.Parse(t[1]);
+						break;
+					case "up":
+						aim -= ulong.Parse(t[1]);
+						break;
+				}
+			}
+			Console.WriteLine("Part 2: " + position * depth);
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}

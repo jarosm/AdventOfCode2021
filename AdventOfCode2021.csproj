@@ -54,7 +54,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Day1.txt" />
+    <Content Include="Day01.txt" />
+    <Content Include="Day02.txt" />
     <Content Include="input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
