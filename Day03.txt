@@ -1,0 +1,70 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			// Part 1
+			string gammaS = "", epsilonS = "";
+			for (int i = 0; i < input[0].Length; i++)
+			{
+				int count = input.Count(x => x[i] == '0');
+				if (count > input.Length - count)
+				{
+					gammaS += "0";
+					epsilonS += "1";
+				}
+				else
+				{
+					gammaS += "1";
+					epsilonS += "0";
+				}
+			}
+			ulong gamma = Convert.ToUInt64(gammaS, 2);
+			ulong epsilon = Convert.ToUInt64(epsilonS, 2);
+			Console.WriteLine(gamma * epsilon);
+
+
+			// Part 2
+			List<string> temp = input.ToList();
+			int index = 0;
+			while (temp.Count > 1)
+			{
+				int count = temp.Count(x => x[index] == '0');
+				if (count > temp.Count - count)
+					temp = temp.Where(x => x[index] == '0').ToList();
+				else
+					temp = temp.Where(x => x[index] == '1').ToList();
+				index++;
+			}
+			ulong oxygen = Convert.ToUInt64(temp[0], 2);
+
+			temp = input.ToList();
+			index = 0;
+			while (temp.Count > 1)
+			{
+				int count = temp.Count(x => x[index] == '1');
+				if (count < temp.Count - count)
+					temp = temp.Where(x => x[index] == '1').ToList();
+				else
+					temp = temp.Where(x => x[index] == '0').ToList();
+				index++;
+			}
+			ulong co2 = Convert.ToUInt64(temp[0], 2);
+
+			Console.WriteLine(oxygen * co2);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
