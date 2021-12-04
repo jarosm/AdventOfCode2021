@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			// Parse input
+			List<int> numbers = new List<int>();
+			List<(int number, bool drawn)[]> boards = new List<(int number, bool drawn)[]>();
+
+			numbers = input[0].Split(',').Select(x => int.Parse(x)).ToList();
+			(int number, bool drawn)[] board = new (int number, bool drawn)[25];
+			int index = 0;
+			for (int i = 1; i < input.Length; i++)
+			{
+				if (input[i].Length == 0)
+				{
+					boards.Add(new (int number, bool drawn)[25]);
+					board = boards[boards.Count - 1];
+					index = 0;
+					continue;
+				}
+				(int, bool)[] t = input[i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(x => (int.Parse(x), false)).ToArray();
+				Array.Copy(t, 0, board, index, 5);
+				index += 5;
+			}
+
+
+			// Part 1 and 2
+			bool bingo = false;
+			foreach (int number in numbers)
+			{
+				int boardIndex = 0;
+				while (boardIndex < boards.Count)
+				{
+					int bi = boards[boardIndex].ToList().FindIndex(x => x.number == number);
+					if (bi >= 0)
+					{
+						boards[boardIndex][bi] = (number, true);
+
+						// Check bingo
+						int start = bi - bi % 5;
+						bool row = true, column = true;
+						for (int j = start; j < start + 5; j++)
+						{
+							if (!boards[boardIndex][j].drawn)
+							{
+								row = false;
+								break;
+							}
+						}
+						start = bi % 5;
+						for (int j = start; j < boards[boardIndex].Length; j += 5)
+						{
+							if (!boards[boardIndex][j].drawn)
+							{
+								column = false;
+								break;
+							}
+						}
+						bingo = row || column;
+
+						if (bingo)
+						{
+							// Part 1 is the first number, Part 2 is the last number
+							int sum = boards[boardIndex].Where(x => !x.drawn).Sum(x => x.number);
+							Console.WriteLine(sum * number);
+
+							bingo = false;
+							boards.RemoveAt(boardIndex);
+						}
+						else
+							boardIndex++;
+					}
+					else
+						boardIndex++;
+				}
+			}
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
