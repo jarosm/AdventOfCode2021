@@ -1,0 +1,82 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			int maxD = 1000;
+			int[,] floor = new int[maxD, maxD];
+
+			// Part 1
+			foreach (string line in input)
+			{
+				int[] t = line.Replace(" -> ", ",").Split(',').Select(x => int.Parse(x)).ToArray();
+
+				if ((t[0] != t[2]) && (t[1] != t[3]))
+					continue;
+
+				for (int x = Math.Min(t[0], t[2]); x <= Math.Max(t[0], t[2]); x++)
+				{
+					for (int y = Math.Min(t[1], t[3]); y <= Math.Max(t[1], t[3]); y++)
+						floor[y, x]++;
+				}
+			}
+
+			int count = 0;
+			for (int y = 0; y < maxD; y++)
+				for (int x = 0; x < maxD; x++)
+					if (floor[y, x] > 1)
+						count++;
+
+			Console.WriteLine("Part 1: " + count);
+
+
+			// Part 2
+			foreach (string line in input)
+			{
+				int[] t = line.Replace(" -> ", ",").Split(',').Select(z => int.Parse(z)).ToArray();
+
+				if ((t[0] == t[2]) || (t[1] == t[3]))
+					continue;
+
+				int x = t[0];
+				int y = t[1];
+				while (true)
+				{
+					floor[y, x]++;
+					if (t[0] < t[2])
+						x++;
+					else
+						x--;
+					if (t[1] < t[3])
+						y++;
+					else
+						y--;
+
+					if (x < Math.Min(t[0], t[2]) || x > Math.Max(t[0], t[2]))
+						break;
+				}
+			}
+
+			count = 0;
+			for (int y = 0; y < maxD; y++)
+				for (int x = 0; x < maxD; x++)
+					if (floor[y, x] > 1)
+						count++;
+
+			Console.WriteLine("Part 2: " + count);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
