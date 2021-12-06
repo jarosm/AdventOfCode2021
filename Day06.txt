@@ -1,0 +1,64 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			int[] input = File.ReadAllLines("input.txt")[0].Split(',').Select(x => int.Parse(x)).ToArray();
+
+
+			// Part 1
+			ulong[] fishes = new ulong[9];
+			foreach (int i in input)
+				fishes[i]++;
+			Console.WriteLine("Part 1: " + Simulate(80, fishes));
+
+
+			// Part 2
+			fishes = new ulong[9];
+			foreach (int i in input)
+				fishes[i]++;
+			Console.WriteLine("Part 2: " + Simulate(256, fishes));
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+
+
+		private static ulong Simulate(int days, ulong[] fishes)
+		{
+			ulong sum = 0;
+
+			while (days > 0)
+			{
+				ulong[] ta = new ulong[9];
+				for (int i = 8; i >= 0; i--)
+				{
+					if (i > 0)
+					{
+						ta[i - 1] = fishes[i];
+					}
+					else
+					{
+						ta[8] = fishes[0];
+						ta[6] += fishes[0];
+					}
+				}
+				Array.Copy(ta, fishes, ta.Length);
+				days--;
+			}
+
+			for (int i = 0; i < 9; i++)
+				sum += fishes[i];
+
+			return sum;
+		}
+	}
+}
