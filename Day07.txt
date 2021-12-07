@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			int[] input = File.ReadAllLines("input.txt")[0].Split(',').Select(x => int.Parse(x)).ToArray();
+
+
+			// Part 1
+			int max = input.Max();
+			int position = 0, minFuel = int.MaxValue;
+			for (int i = 1; i <= max; i++)
+			{
+				int temp = input.Select(x => Math.Abs(x - i)).Sum();
+				if (temp < minFuel)
+				{
+					minFuel = temp;
+					position = i;
+				}
+			}
+			Console.WriteLine("Part 1: " + minFuel);
+
+
+			// Part 2
+			max = input.Max();
+			position = 0;
+			minFuel = int.MaxValue;
+			for (int i = 1; i <= max; i++)
+			{
+				int temp = input.Select(x => Math.Abs(x - i) * (Math.Abs(x - i) + 1) / 2).Sum();
+				if (temp < minFuel)
+				{
+					minFuel = temp;
+					position = i;
+				}
+			}
+			Console.WriteLine("Part 2: " + minFuel);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
