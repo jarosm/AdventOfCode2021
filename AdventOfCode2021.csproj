@@ -61,6 +61,7 @@
     <Content Include="Day05.txt" />
     <Content Include="Day06.txt" />
     <Content Include="Day07.txt" />
+    <Content Include="Day08.txt" />
     <Content Include="input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

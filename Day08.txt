@@ -1,0 +1,121 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+
+			// Part 1
+			int count = 0;
+			foreach (string line in input)
+			{
+				count += line.Replace(" | ", "|").Split('|')[1].Split(' ').Where(x => x.Length == 2 || x.Length == 3 || x.Length == 4 || x.Length == 7).Count();
+			}
+			Console.WriteLine("Part 1: " + count);
+
+
+			// Part 2
+			int sum = 0;
+			foreach (string line in input)
+			{
+				List<string> p1 = line.Replace(" | ", "|").Split('|')[0].Split(' ').ToList();
+				string[] p2 = line.Replace(" | ", "|").Split('|')[1].Split(' ');
+
+				var sc = p1.GroupBy(x => x.Length).ToDictionary(x => x.Key, x => x.ToList());
+
+				var stringNumber = new Dictionary<string, int>();
+				var numberString = new Dictionary<int, string>();
+
+				// 1
+				string s = string.Concat(sc[2][0].OrderBy(x => x));
+				stringNumber.Add(s, 1);
+				numberString.Add(1, s);
+				p1.Remove(p1.Where(x => string.Concat(x.OrderBy(z => z)) == s).First());
+
+				// 4
+				s = string.Concat(sc[4][0].OrderBy(x => x));
+				stringNumber.Add(s, 4);
+				numberString.Add(4, s);
+				p1.Remove(p1.Where(x => string.Concat(x.OrderBy(z => z)) == s).First());
+
+				// 7
+				s = string.Concat(sc[3][0].OrderBy(x => x));
+				stringNumber.Add(s, 7);
+				numberString.Add(7, s);
+				p1.Remove(p1.Where(x => string.Concat(x.OrderBy(z => z)) == s).First());
+
+				// 8
+				s = string.Concat(sc[7][0].OrderBy(x => x));
+				stringNumber.Add(s, 8);
+				numberString.Add(8, s);
+				p1.Remove(p1.Where(x => string.Concat(x.OrderBy(z => z)) == s).First());
+
+				// 3
+				char[] a = numberString[1].ToArray();
+				s = string.Concat(sc[5].Where(x => x.Contains(a[0]) && x.Contains(a[1])).First().OrderBy(x => x));
+				stringNumber.Add(s, 3);
+				numberString.Add(3, s);
+				p1.Remove(p1.Where(x => string.Concat(x.OrderBy(z => z)) == s).First());
+
+				// 6
+				a = numberString[1].ToArray();
+				s = string.Concat(sc[6].Where(x => (x.Contains(a[0]) && !x.Contains(a[1])) || (!x.Contains(a[0]) && x.Contains(a[1]))).First().OrderBy(x => x));
+				stringNumber.Add(s, 6);
+				numberString.Add(6, s);
+				p1.Remove(p1.Where(x => string.Concat(x.OrderBy(z => z)) == s).First());
+
+				// 9
+				a = numberString[4].ToArray();
+				s = string.Concat(sc[6].Where(x => x.Contains(a[0]) && x.Contains(a[1]) && x.Contains(a[2]) && x.Contains(a[3])).First().OrderBy(x => x));
+				stringNumber.Add(s, 9);
+				numberString.Add(9, s);
+				p1.Remove(p1.Where(x => string.Concat(x.OrderBy(z => z)) == s).First());
+
+				// 0
+				s = sc[6].Select(x => string.Concat(x.OrderBy(z => z))).Where(x => x != numberString[6] && x != numberString[9]).First();
+				stringNumber.Add(s, 0);
+				numberString.Add(0, s);
+				p1.Remove(p1.Where(x => string.Concat(x.OrderBy(z => z)) == s).First());
+
+				// 5
+				if (numberString[6].Contains(p1[0][0]) && numberString[6].Contains(p1[0][1]) && numberString[6].Contains(p1[0][2]) && numberString[6].Contains(p1[0][3]) && numberString[6].Contains(p1[0][4]))
+				{
+					s = string.Concat(p1[0].OrderBy(x => x));
+					p1.RemoveAt(0);
+				}
+				else
+				{
+					s = string.Concat(p1[1].OrderBy(x => x));
+					p1.RemoveAt(1);
+				}
+				stringNumber.Add(s, 5);
+				numberString.Add(5, s);
+
+				// 2
+				s = string.Concat(p1[0].OrderBy(x => x));
+				stringNumber.Add(s, 2);
+				numberString.Add(2, s);
+
+				int number = 0;
+				foreach (string p in p2)
+				{
+					number = 10 * number + stringNumber[string.Concat(p.OrderBy(x => x))];
+				}
+				sum += number;
+			}
+			Console.WriteLine("Part 2: " + sum);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
