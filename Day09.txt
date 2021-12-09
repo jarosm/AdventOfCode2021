@@ -1,0 +1,91 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+
+			int maxY = input.Length, maxX = input[0].Length;
+			int[][] map = new int[maxY][];
+			for (int y = 0; y < maxY; y++)
+				map[y] = input[y].Select(x => int.Parse(x.ToString())).ToArray();
+
+
+			// Part 1
+			int sum = 0;
+			Queue<(int y, int x)> lowestPoints = new Queue<(int y,int x)> ();
+			for (int y = 0; y < maxY; y++)
+			{
+				for (int x = 0; x < maxX; x++)
+				{
+					bool lowest = true;
+					if (y - 1 >= 0)
+						if (!(map[y][x] < map[y - 1][x]))
+							lowest = false;
+					if (x - 1 >= 0)
+						if (!(map[y][x] < map[y][x - 1]))
+							lowest = false;
+					if (y + 1 < maxY)
+						if (!(map[y][x] < map[y + 1][x]))
+							lowest = false;
+					if (x + 1 < maxX)
+						if (!(map[y][x] < map[y][x + 1]))
+							lowest = false;
+					if (lowest)
+					{
+						sum += map[y][x] + 1;
+						lowestPoints.Enqueue((y, x));
+					}
+				}
+			}
+			Console.WriteLine("Part 1: " + sum);
+
+
+			// Part 2
+			List<int> basinSizes = new List<int>();
+			while (lowestPoints.Count > 0)
+			{
+				Queue<(int y, int x)> queue = new Queue<(int y, int x)>();
+				HashSet<(int y, int x)> processed = new HashSet<(int y, int x)>();
+				int basinSize = 0;
+				queue.Enqueue(lowestPoints.Dequeue());
+
+				while (queue.Count > 0)
+				{
+					var point = queue.Dequeue();
+
+					if (processed.Contains(point))
+						continue;
+
+					processed.Add(point);
+					basinSize++;
+
+					if (point.y - 1 >= 0 && map[point.y - 1][point.x] < 9)
+						queue.Enqueue((point.y - 1, point.x));
+					if (point.x - 1 >= 0 && map[point.y][point.x - 1] < 9)
+						queue.Enqueue((point.y, point.x - 1));
+					if (point.y + 1 < maxY && map[point.y + 1][point.x] < 9)
+						queue.Enqueue((point.y + 1, point.x));
+					if (point.x + 1 < maxX && map[point.y][point.x + 1] < 9)
+						queue.Enqueue((point.y, point.x + 1));
+				}
+
+				basinSizes.Add(basinSize);
+			}
+			basinSizes = basinSizes.OrderByDescending(x => x).ToList();
+			Console.WriteLine("Part 2: " + basinSizes[0] * basinSizes[1] * basinSizes[2]);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
