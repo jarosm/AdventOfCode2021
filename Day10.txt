@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			List<string> input = File.ReadAllLines("input.txt").ToList();
+
+
+			// Part 1
+			List<Stack<char>> stacks = new List<Stack<char>>();
+			long score = 0;
+			Dictionary<char, int> scoreTable = new Dictionary<char, int>() { { ')', 3 }, { ']', 57 }, { '}', 1197 }, { '>', 25137 } };
+			Dictionary<char, char> pareTable = new Dictionary<char, char>() { { ')', '(' }, { ']', '[' }, { '}', '{' }, { '>', '<' } };
+
+			int index = 0;
+			while (index < input.Count)
+			{
+				bool corrupted = false;
+				Stack<char> stack = new Stack<char>();
+
+				for (int i = 0; i < input[index].Length; i++)
+				{
+					if (input[index][i] == '(' || input[index][i] == '[' || input[index][i] == '{' || input[index][i] == '<')
+						stack.Push(input[index][i]);
+					else
+					{
+						if (pareTable[input[index][i]] != stack.Pop())
+						{
+							corrupted = true;
+							score += scoreTable[input[index][i]];
+							break;
+						}
+					}
+				}
+
+				if (corrupted)
+					input.RemoveAt(index);
+				else
+				{
+					index++;
+					stacks.Add(stack);
+				}
+			}
+
+			Console.WriteLine("Part 1: " + score);
+
+
+			// Part 2
+			List<long> scores = new List<long>();
+			scoreTable = new Dictionary<char, int>() { { '(', 1 }, { '[', 2 }, { '{', 3 }, { '<', 4 } };
+			foreach (var stack in stacks)
+			{
+				score = 0;
+				while (stack.Count > 0)
+				{
+					score *= 5;
+					score += scoreTable[stack.Pop()];
+				}
+				scores.Add(score);
+			}
+			Console.WriteLine("Part 2: " + scores.OrderBy(x => x).ToList()[scores.Count / 2]);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
