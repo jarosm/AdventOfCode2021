@@ -1,0 +1,91 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			int maxX = input[0].Length, maxY = input.Length, steps = 100;
+			Octopus[,] octopus = new Octopus[maxY, maxX];
+			for (int y = 0; y < maxY; y++)
+				for (int x = 0; x < maxX; x++)
+					octopus[y, x] = new Octopus() { X = x, Y = y, Level = int.Parse(input[y][x].ToString()) };
+
+
+			// Part 1 and 2
+			int count = 0, s = 0;
+			while (true)
+			{
+				var queue = new Queue<(int y, int x)>();
+				var flashed = new HashSet<(int y, int x)>();
+
+				foreach (Octopus o in octopus)
+				{
+					if (octopus[o.Y, o.X].Level < 9)
+						octopus[o.Y, o.X].Level++;
+					else
+						queue.Enqueue((o.Y, o.X));
+				}
+
+				while (queue.Count > 0)
+				{
+					var q = queue.Dequeue();
+
+					if (q.y < 0 || q.y >= maxY || q.x < 0 || q.x >= maxX || flashed.Contains((q.y, q.x)))
+						continue;
+
+					octopus[q.y, q.x].Level++;
+					if (octopus[q.y, q.x].Level > 9)
+					{
+						count++;
+						flashed.Add((q.y, q.x));
+						octopus[q.y, q.x].Level = 0;
+
+						queue.Enqueue((q.y - 1, q.x - 1));
+						queue.Enqueue((q.y - 1, q.x));
+						queue.Enqueue((q.y - 1, q.x + 1));
+
+						queue.Enqueue((q.y, q.x - 1));
+						queue.Enqueue((q.y, q.x + 1));
+
+						queue.Enqueue((q.y + 1, q.x - 1));
+						queue.Enqueue((q.y + 1, q.x));
+						queue.Enqueue((q.y + 1, q.x + 1));
+					}
+				}
+
+				s++;
+
+				if (s == steps)
+				{
+					Console.WriteLine("Part 1: " + count);
+					//break;
+				}
+
+				if (flashed.Count == maxX * maxY)
+				{
+					Console.WriteLine("Part 2: " + s);
+					break;
+				}
+			}
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+
+	public class Octopus
+	{
+		public int X { get; set; }
+		public int Y { get; set; }
+		public int Level { get; set; }
+	}
+}
