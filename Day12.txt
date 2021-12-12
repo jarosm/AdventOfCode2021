@@ -1,0 +1,109 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static Dictionary<string, List<string>> CreateCaveSystem(string[] input)
+		{
+			Dictionary<string, List<string>> caveSystem = new Dictionary<string, List<string>>();
+			foreach (string line in input)
+			{
+				string[] t = line.Split('-');
+				if (!caveSystem.ContainsKey(t[0]))
+					caveSystem.Add(t[0], new List<string>());
+				caveSystem[t[0]].Add(t[1]);
+				if (!caveSystem.ContainsKey(t[1]))
+					caveSystem.Add(t[1], new List<string>());
+				caveSystem[t[1]].Add(t[0]);
+			}
+			return caveSystem;
+		}
+
+
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+
+			// Part 1
+			Dictionary<string, List<string>> caveSystem = CreateCaveSystem(input);
+			int count = 0;
+			foreach (string sc in caveSystem["start"])
+			{
+				Queue<(string cave, List<string> visited)> queue = new Queue<(string, List<string>)>();
+				queue.Enqueue((sc, new List<string>()));
+
+				while (queue.Count > 0)
+				{
+					var c = queue.Dequeue();
+					var nextCaves = caveSystem[c.cave];
+
+					if (c.cave[0] >= 'a' && c.cave[0] <= 'z')
+						c.visited.Add(c.cave);
+
+					foreach(string nc in nextCaves)
+					{
+						if (nc == "end")
+						{
+							count++;
+							continue;
+						}
+
+						if (nc == "start" || c.visited.Contains(nc))
+							continue;
+
+						queue.Enqueue((nc, new List<string>(c.visited)));
+					}
+				}
+			}
+			Console.WriteLine("Part 1: " + count);
+
+
+			// Part 2
+			caveSystem = CreateCaveSystem(input);
+			count = 0;
+			foreach (string sc in caveSystem["start"])
+			{
+				Queue<(string cave, List<string> visited)> queue = new Queue<(string, List<string>)>();
+				queue.Enqueue((sc, new List<string>()));
+
+				while (queue.Count > 0)
+				{
+					var c = queue.Dequeue();
+					var nextCaves = caveSystem[c.cave];
+
+					if (c.cave[0] >= 'a' && c.cave[0] <= 'z')
+						c.visited.Add(c.cave);
+
+					foreach (string nc in nextCaves)
+					{
+						if (nc == "end")
+						{
+							count++;
+							continue;
+						}
+						if (nc == "start")
+							continue;
+						if (c.visited.Contains(nc))
+						{
+							if (c.visited.GroupBy(x => x).Where(g => g.Count() > 1).Count() > 0)
+								continue;
+						}
+
+						queue.Enqueue((nc, new List<string>(c.visited)));
+					}
+				}
+			}
+			Console.WriteLine("Part 2: " + count);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
