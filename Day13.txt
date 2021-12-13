@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			List<(int x, int y)> dots = new List<(int x, int y)>();
+			List<(FoldDirection dir, int value)> folds = new List<(FoldDirection dir, int value)>();
+			foreach (string line in input)
+			{
+				if (line.Length > 0)
+				{
+					if (line.StartsWith("fold"))
+					{
+						string[] t1 = line.Replace("fold along ", "").Split('=');
+						if (t1[0] == "x")
+							folds.Add((FoldDirection.FoldX, int.Parse(t1[1])));
+						else
+							folds.Add((FoldDirection.FoldY, int.Parse(t1[1])));
+					}
+					else
+					{
+						int[] t2 = line.Split(',').Select(x => int.Parse(x)).ToArray();
+						dots.Add((t2[0], t2[1]));
+					}
+				}
+			}
+
+
+			// Part 1
+			HashSet<(int x, int y)> dotsP1 = new HashSet<(int x, int y)>();
+			foreach (var dot in dots)
+			{
+				var newDot = Fold(dot, folds[0]);
+				if (!dotsP1.Contains(newDot))
+					dotsP1.Add(newDot);
+			}
+			Console.WriteLine("Part 1: " + dotsP1.Count);
+
+
+			// Part 2
+			int width = 41, height = 7;
+			bool[,] dotsP2 = new bool[width, height];
+			foreach (var dot in dots)
+			{
+				var newDot = dot;
+				foreach (var fold in folds)
+					newDot = Fold(newDot, fold);
+				dotsP2[newDot.x, newDot.y] = true;
+			}
+			for (int y = 0; y < height; y++)
+			{
+				for (int x = 0; x < width; x++)
+					if (dotsP2[x, y])
+						Console.Write("#");
+					else
+						Console.Write(' ');
+				Console.WriteLine();
+			}
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+
+		public static (int x, int y) Fold((int x, int y) dot, (FoldDirection dir, int value) fold)
+		{
+			if (fold.dir == FoldDirection.FoldX)
+				return (dot.x <= fold.value ? dot.x : (2 * fold.value - dot.x), dot.y);
+			else
+				return (dot.x, dot.y <= fold.value ? dot.y : (2 * fold.value - dot.y));
+		}
+	}
+
+	public enum FoldDirection
+	{
+		FoldX,
+		FoldY
+	}
+}

@@ -1,0 +1,12 @@
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Release\input.txt
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Release\AdventOfCode2021.exe.config
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Release\AdventOfCode2021.exe
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Release\AdventOfCode2021.pdb
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Release\System.ValueTuple.dll
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Release\System.ValueTuple.xml
+D:\programming\Advent of Code\source\AdventOfCode2021\obj\Release\AdventOfCode2021.csproj.AssemblyReference.cache
+D:\programming\Advent of Code\source\AdventOfCode2021\obj\Release\AdventOfCode2021.csproj.SuggestedBindingRedirects.cache
+D:\programming\Advent of Code\source\AdventOfCode2021\obj\Release\AdventOfCode2021.csproj.CoreCompileInputs.cache
+D:\programming\Advent of Code\source\AdventOfCode2021\obj\Release\AdventOfCode2021.csproj.CopyComplete
+D:\programming\Advent of Code\source\AdventOfCode2021\obj\Release\AdventOfCode2021.exe
+D:\programming\Advent of Code\source\AdventOfCode2021\obj\Release\AdventOfCode2021.pdb
