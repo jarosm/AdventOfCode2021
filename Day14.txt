@@ -1,0 +1,88 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			string template = input[0];
+			Dictionary<string, ulong> pairs = new Dictionary<string, ulong>();
+			for (int i = 0; i < template.Length - 1; i++)
+			{
+				string t = template.Substring(i, 2);
+				if (!pairs.ContainsKey(t))
+					pairs.Add(t, 1);
+				else
+					pairs[t] = pairs[t] + 1;
+			}
+
+			Dictionary<string, string> rules = new Dictionary<string, string>();
+			for (int i = 2; i < input.Length; i++)
+			{
+				string[] t = input[i].Replace(" -> ", ";").Split(';');
+				rules.Add(t[0], t[1]);
+			}
+
+
+			// Part 1 and 2
+			for (int s = 0; s < 40; s++)
+			{
+				if (s == 10)
+					Console.WriteLine("Part 1: " + CountElements(pairs, template[0]));
+
+				pairs = Expand(pairs, rules);
+			}
+			Console.WriteLine("Part 2: " + CountElements(pairs, template[0]));
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+
+		private static Dictionary<string, ulong> Expand(Dictionary<string, ulong> pairs, Dictionary<string, string> rules)
+		{
+			Dictionary<string, ulong> result = new Dictionary<string, ulong>();
+			foreach (var pair in pairs)
+			{
+				string first = pair.Key[0].ToString();
+				string middle = rules[pair.Key];
+				string last = pair.Key[1].ToString();
+
+				if (result.ContainsKey(first + middle))
+					result[first + middle] = result[first + middle] + pair.Value;
+				else
+					result.Add(first + middle, pair.Value);
+
+				if (result.ContainsKey(middle + last))
+					result[middle + last] = result[middle + last] + pair.Value;
+				else
+					result.Add(middle + last, pair.Value);
+			}
+			return result;
+		}
+
+		private static ulong CountElements(Dictionary<string, ulong> pairs, char startElement)
+		{
+			ulong result = 0;
+			Dictionary<char, ulong> elements = new Dictionary<char, ulong>();
+			elements.Add(startElement, 1);
+			foreach (var pair in pairs)
+			{
+				if (elements.ContainsKey(pair.Key[1]))
+					elements[pair.Key[1]] = elements[pair.Key[1]] + pair.Value;
+				else
+					elements.Add(pair.Key[1], pair.Value);
+			}
+			var ordered = elements.OrderByDescending(e => e.Value).ToList();
+			result = ordered[0].Value - ordered[ordered.Count - 1].Value;
+			return result;
+		}
+	}
+}
