@@ -1,0 +1,91 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			int maxX = input[0].Length, maxY = input.Length;
+			Level[][] cave = new Level[maxY][];
+			for (int y = 0; y < maxY; y++)
+				cave[y] = input[y].Select(x => new Level() { RiskLevel = int.Parse(x.ToString()), TotalRiskLevel = int.MaxValue }).ToArray();
+
+
+			// Part 1			
+			Console.WriteLine("Part 1: " + BFS(cave, maxX, maxY));
+
+			// Part 2
+			maxX *= 5;
+			maxY *= 5;
+			cave = new Level[maxY][];
+			for (int y = 0; y < maxY; y++)
+			{
+				cave[y] = new Level[maxX];
+				int c1 = y / input.Length;
+				for (int x = 0; x < maxX; x += input[0].Length)
+				{
+					Array.Copy(input[y % input.Length].Select(k => new Level() { 
+							RiskLevel = (int.Parse(k.ToString()) + c1 > 9 ? (int.Parse(k.ToString()) + c1) % 10 + 1 : int.Parse(k.ToString()) + c1),
+							TotalRiskLevel = int.MaxValue }).ToArray(),
+						0,
+						cave[y],
+						x,
+						input[0].Length);
+					c1++;
+				}
+			}
+			Console.WriteLine("Part 2: " + BFS(cave, maxX, maxY));
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+
+		private static int BFS(Level[][] cave, int maxX, int maxY)
+		{
+			Queue<(int y, int x)> queue = new Queue<(int y, int x)>();
+			Queue<int> riskLevel = new Queue<int>();
+			queue.Enqueue((0, 1));
+			riskLevel.Enqueue(0);
+			queue.Enqueue((1, 0));
+			riskLevel.Enqueue(0);
+
+			while (queue.Count > 0)
+			{
+				var q = queue.Dequeue();
+				var r = riskLevel.Dequeue();
+
+				if (q.y < 0 || q.y >= maxY || q.x < 0 || q.x >= maxX)
+					continue;
+
+				if (cave[q.y][q.x].RiskLevel + r < cave[q.y][q.x].TotalRiskLevel)
+				{
+					cave[q.y][q.x].TotalRiskLevel = cave[q.y][q.x].RiskLevel + r;
+
+					queue.Enqueue((q.y, q.x + 1));
+					riskLevel.Enqueue(cave[q.y][q.x].TotalRiskLevel);
+					queue.Enqueue((q.y + 1, q.x));
+					riskLevel.Enqueue(cave[q.y][q.x].TotalRiskLevel);
+					queue.Enqueue((q.y, q.x - 1));
+					riskLevel.Enqueue(cave[q.y][q.x].TotalRiskLevel);
+					queue.Enqueue((q.y - 1, q.x));
+					riskLevel.Enqueue(cave[q.y][q.x].TotalRiskLevel);
+				}
+			}
+			return cave[maxY - 1][maxX - 1].TotalRiskLevel;
+		}
+	}
+
+	public class Level
+	{
+		public int RiskLevel { get; set; }
+		public int TotalRiskLevel { get; set; }
+	}
+}
