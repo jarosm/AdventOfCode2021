@@ -1,0 +1,153 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+			string hex = input[1];
+			string packets = string.Join(string.Empty, hex.Select(x => Convert.ToString(Convert.ToInt32(x.ToString(), 16), 2).PadLeft(4, '0')));
+
+
+			// Part 1 and 2
+			int index = 0;
+			var result = ReadPackets(packets, packets.Length, ref index);
+			Console.WriteLine("Part 1: " + result.versionSum);
+			Console.WriteLine("Part 2: " + result.resultList[0]);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+
+		private static (int versionSum, List<ulong> resultList) ReadPackets(string packets, int length, ref int index)
+		{
+			int versionSum = 0, len = 0;
+			List<ulong> resultList = new List<ulong>();
+
+			while (true)
+			{
+				if (packets.Length - index < 8)
+					break;
+
+				int version = Convert.ToInt32(packets.Substring(index, 3), 2);
+				index += 3;
+				len += 3;
+				versionSum += version;
+
+				int type = Convert.ToInt32(packets.Substring(index, 3), 2);
+				index += 3;
+				len += 3;
+
+				if (type == 4) // literal
+				{
+					bool end = false;
+					string s = "";
+					while (!end)
+					{
+						len += 5;
+						if (packets[index] == '0')
+							end = true;
+						index++;
+						s += packets.Substring(index, 4);
+						index += 4;
+						if (end)
+						{
+							ulong num = Convert.ToUInt64(s, 2);
+							resultList.Add(num);
+						}
+					}
+				}
+				else
+				{
+					char l = packets[index];
+					index++;
+					len++;
+					List<ulong> tempList = new List<ulong>();
+					if (l == '0')
+					{
+						int l2 = Convert.ToInt32(packets.Substring(index, 15), 2);
+						index += 15;
+						len += 15 + l2;
+						var r1 = ReadPackets(packets, l2, ref index);
+						versionSum += r1.versionSum;
+						tempList = r1.resultList;
+					}
+					else
+					{
+						int c2 = Convert.ToInt32(packets.Substring(index, 11), 2);
+						index += 11;
+						len += 11;
+						int startIndex = index;
+						while (c2 > 0)
+						{
+							var r2 = ReadPackets(packets, -1, ref index);
+							versionSum += r2.versionSum;
+							tempList.AddRange(r2.resultList);
+							c2--;
+						}
+						len += index - startIndex;
+					}
+
+					switch (type)
+					{
+						case 0:
+							ulong res0 = 0;
+							for (int i = 0; i < tempList.Count; i++)
+								res0 += tempList[i];
+							resultList.Add(res0);
+							break;
+						case 1:
+							ulong res1 = 1;
+							for (int i = 0; i < tempList.Count; i++)
+								res1 *= tempList[i];
+							resultList.Add(res1);
+							break;
+						case 2:
+							ulong res2 = tempList[0];
+							for (int i = 1; i < tempList.Count; i++)
+								if (tempList[i] < res2) res2 = tempList[i];
+							resultList.Add(res2);
+							break;
+						case 3:
+							ulong res3 = tempList[0];
+							for (int i = 1; i < tempList.Count; i++)
+								if (tempList[i] > res3) res3 = tempList[i];
+							resultList.Add(res3);
+							break;
+						case 5:
+							if (tempList[0] > tempList[1])
+								resultList.Add(1);
+							else
+								resultList.Add(0);
+							break;
+						case 6:
+							if (tempList[0] < tempList[1])
+								resultList.Add(1);
+							else
+								resultList.Add(0);
+							break;
+						case 7:
+							if (tempList[0] == tempList[1])
+								resultList.Add(1);
+							else
+								resultList.Add(0);
+							break;
+					}
+				}
+
+				if (length == -1 || len == length)
+					break;
+			}
+
+			return (versionSum, resultList);
+		}
+	}
+}
