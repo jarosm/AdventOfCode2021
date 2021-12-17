@@ -1,0 +1,74 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+
+			// Part 1 and 2
+			string[] temp = input[1].Split(new string[] { "x=", "..", "y=", "target area: ", " ", "," }, StringSplitOptions.RemoveEmptyEntries);
+			int targetAreaXMin = int.Parse(temp[0]);
+			int targetAreaXMax = int.Parse(temp[1]);
+			int targetAreaYMin = int.Parse(temp[2]);
+			int targetAreaYMax = int.Parse(temp[3]);
+
+			int[] probePosition;
+			int[] probeVelocity;
+
+			int max = int.MinValue, count = 0;
+
+			for (int y = -1000; y < 1000; y++)
+			{
+				for (int x = 1; x < 1000; x++)
+				{
+					probeVelocity = new int[2] { x, y };
+					probePosition = new int[2] { 0, 0 };
+					int yPosCount = 0;
+					bool hitTarget = false;
+					while (probePosition[0] <= targetAreaXMax && probePosition[1] >= targetAreaYMin)
+					{
+
+						probePosition[0] += probeVelocity[0];
+						probePosition[1] += probeVelocity[1];
+
+						if (probePosition[1] > yPosCount)
+							yPosCount = probePosition[1];
+
+						if (probeVelocity[0] > 0)
+							probeVelocity[0]--;
+						else if (probeVelocity[0] < 0)
+							probeVelocity[0]++;
+
+						probeVelocity[1]--;
+
+						if ((probePosition[0] >= targetAreaXMin && probePosition[0] <= targetAreaXMax) &&
+							(probePosition[1] >= targetAreaYMin && probePosition[1] <= targetAreaYMax))
+						{
+							hitTarget = true;
+
+							if (yPosCount > max)
+								max = yPosCount;
+						}
+					}
+
+					if (hitTarget)
+						count++;
+				}
+			}
+			Console.WriteLine("Part 1: " + max);
+			Console.WriteLine("Part 2: " + count);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+	}
+}
