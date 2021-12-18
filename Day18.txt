@@ -1,0 +1,217 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+	public class Base
+	{
+	}
+
+	public class Parenthesis : Base
+	{
+		public char Value { get; set; }
+	}
+
+	public class Number : Base
+	{
+		public int Value { get; set; }
+	}
+
+	class Program
+	{
+		static void Main(string[] args)
+		{
+			string[] input = File.ReadAllLines("input.txt");
+
+
+			// Part 1
+			LinkedList<Base> number = ParseInput(input[0]);
+			for (int i = 1; i < input.Length; i++)
+			{
+				number.AddFirst(new Parenthesis() { Value = '[' });
+				foreach (var node in ParseInput(input[i]))
+					number.AddLast(node);
+				number.AddLast(new Parenthesis() { Value = ']' });
+
+				Reduce(number);
+			}
+			DumpNumber(number);
+			Console.WriteLine("Part 1: " + GetMagnitude(number));
+
+
+			// Part 2
+			int max = int.MinValue;
+			for (int i = 0; i < input.Length; i++)
+			{
+				for (int j = 0; j < input.Length; j++)
+				{
+					if (i == j)
+						continue;
+
+					number = ParseInput(input[i]);
+					number.AddFirst(new Parenthesis() { Value = '[' });
+					foreach (var node in ParseInput(input[j]))
+						number.AddLast(node);
+					number.AddLast(new Parenthesis() { Value = ']' });
+					Reduce(number);
+					int mag = GetMagnitude(number);
+					if (mag > max)
+						max = mag;
+				}
+			}
+			Console.WriteLine("Part 2: " + max);
+
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+
+		private static LinkedList<Base> ParseInput(string line)
+		{
+			LinkedList<Base> number = new LinkedList<Base>();
+			for (int i = 0; i < line.Length; i++)
+			{
+				switch (line[i])
+				{
+					case '[':
+					case ']':
+						number.AddLast(new Parenthesis() { Value = line[i] });
+						break;
+					case ',':
+						break;
+					default:
+						number.AddLast(new Number() { Value = int.Parse(line[i].ToString()) });
+						break;
+				}
+			}
+			return number;
+		}
+
+		private static void DumpNumber(LinkedList<Base> number)
+		{
+			LinkedListNode<Base> current = number.First;
+			while (current != null)
+			{
+				if (current.Value.GetType() == typeof(Parenthesis))
+				{
+					if (((Parenthesis)current.Value).Value == '[' && current.Previous != null && ((current.Previous.Value.GetType() == typeof(Parenthesis) && ((Parenthesis)current.Previous.Value).Value == ']') || current.Previous.Value.GetType() == typeof(Number)))
+						Console.Write(",");
+					Console.Write(((Parenthesis)current.Value).Value);
+				}
+				else
+				{
+					if (current.Previous.Value.GetType() == typeof(Number) || (current.Previous.Value.GetType() == typeof(Parenthesis) && ((Parenthesis)current.Previous.Value).Value == ']'))
+						Console.Write(",");
+					Console.Write(((Number)current.Value).Value);
+				}
+
+				current = current.Next;
+			}
+			Console.WriteLine();
+		}
+
+		private static void Reduce(LinkedList<Base> number)
+		{
+			do
+			{
+				while (Explode(number))
+					;
+			} while (Split(number));
+		}
+
+		private static bool Explode(LinkedList<Base> number)
+		{
+			LinkedListNode<Base> current = number.First;
+			int counter = 0;
+
+			while (current != null)
+			{
+				if (counter == 5)
+				{
+					// Left
+					int val = ((Number)current.Value).Value;
+					LinkedListNode<Base> node = current.Previous;
+					while (node != null && node.Value.GetType() != typeof(Number))
+						node = node.Previous;
+					if (node != null)
+						((Number)node.Value).Value += val;
+
+					// Right
+					val = ((Number)current.Next.Value).Value;
+					node = current.Next.Next;
+					while (node != null && node.Value.GetType() != typeof(Number))
+						node = node.Next;
+					if (node != null)
+						((Number)node.Value).Value += val;
+
+					((Number)current.Value).Value = 0;
+					number.Remove(current.Next);
+					number.Remove(current.Next);
+					number.Remove(current.Previous);
+
+					return true;
+				}
+
+				if (current.Value.GetType() == typeof(Parenthesis))
+				{
+					if (((Parenthesis)current.Value).Value == '[')
+						counter++;
+					else
+						counter--;
+				}
+
+				current = current.Next;
+			}
+
+			return false;
+		}
+
+		private static bool Split(LinkedList<Base> number)
+		{
+			LinkedListNode<Base> current = number.First;
+			while (current != null)
+			{
+				if (current.Value.GetType() == typeof(Number) && ((Number)current.Value).Value > 9)
+				{
+					int val = ((Number)current.Value).Value;
+
+					number.AddBefore(current, new Parenthesis() { Value = '[' });
+					((Number)current.Value).Value = val / 2;
+					number.AddAfter(current, new Parenthesis() { Value = ']' });
+					number.AddAfter(current, new Number() { Value = val / 2 + val % 2 });
+
+					return true;
+				}
+
+				current = current.Next;
+			}
+
+			return false;
+		}
+
+		private static int GetMagnitude(LinkedList<Base> number)
+		{
+			LinkedListNode<Base> current = number.First;
+			Stack<int> stack = new Stack<int>();
+			while (current != null)
+			{
+				if (current.Value.GetType() == typeof(Number))
+					stack.Push(((Number)current.Value).Value);
+				else
+				{
+					if (((Parenthesis)current.Value).Value == ']')
+					{
+						int right = stack.Pop();
+						int left = stack.Pop();
+						stack.Push(3 * left + 2 * right);
+					}
+				}
+				current = current.Next;
+			}
+			return stack.Pop();
+		}
+	}
+}
