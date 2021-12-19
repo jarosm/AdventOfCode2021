@@ -6,14 +6,15 @@ using System.IO;
 
 namespace AdventOfCode2021
 {
-	class Program
-	{
-		static void Main(string[] args)
-		{
-			string[] input = File.ReadAllLines("input.txt");
+    class Program
+    {       
+        static void Main(string[] args)
+        {
+            var input = File.ReadAllLines("input.txt");
 
-			Console.WriteLine("end");
-			Console.ReadLine();
-		}
-	}
+            Console.WriteLine("end");
+            Console.ReadLine();
+        }
+
+    }
 }

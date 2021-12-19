@@ -10,3 +10,13 @@ D:\programming\Advent of Code\source\AdventOfCode2021\obj\Debug\AdventOfCode2021
 D:\programming\Advent of Code\source\AdventOfCode2021\obj\Debug\AdventOfCode2021.pdb
 D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\input.txt
 D:\programming\Advent of Code\source\AdventOfCode2021\obj\Debug\AdventOfCode2021.csproj.SuggestedBindingRedirects.cache
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Buffers.dll
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Collections.Immutable.dll
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Memory.dll
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Numerics.Vectors.dll
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Buffers.xml
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Collections.Immutable.xml
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Memory.xml
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Numerics.Vectors.xml
+D:\programming\Advent of Code\source\AdventOfCode2021\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
