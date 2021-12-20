@@ -7,7 +7,7 @@ using System.IO;
 namespace AdventOfCode2021
 {
     class Program
-    {       
+    {
         static void Main(string[] args)
         {
             var input = File.ReadAllLines("input.txt");

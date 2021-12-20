@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace ConsoleApp1
+{
+	internal class Program
+	{
+		private static string algorithm;
+		private static Dictionary<(int X, int Y), bool> grid;
+		private static Dictionary<(int X, int Y), bool> original;
+		private static List<(int X, int Y)> neighbourOffsets;
+
+		static void Main(string[] args)
+		{
+			var input = File.ReadAllLines("input.txt");
+
+			algorithm = input[0];
+			grid = input[2..].SelectMany((x, i) => x.Select((y, j) => (j, i, y))).ToDictionary(x => (x.j, x.i), x => x.y == '#');
+			original = grid;
+			neighbourOffsets = new List<(int X, int Y)> { (-1, -1), (0, -1), (1, -1), (-1, 0), (0, 0), (1, 0), (-1, 1), (0, 1), (1, 1) };
+
+			Console.WriteLine("Part 1: " + IterateTwice());
+			Console.WriteLine("Part 2: " + IterateFifty());
+
+			Console.WriteLine("end");
+			Console.ReadLine();
+		}
+
+		private static int IterateTwice()
+		{
+			Enumerable.Range(0, 2).ToList().ForEach(x => Expand());
+			return grid.Count(x => x.Value);
+		}
+
+		private static int IterateFifty()
+		{
+			grid = original;
+			Enumerable.Range(0, 50).ToList().ForEach(x => Expand());
+			return grid.Count(x => x.Value);
+		}
+
+		private static void Expand()
+		{
+			var minX = grid.Keys.Min(x => x.X);
+			var minY = grid.Keys.Min(x => x.Y);
+			var maxX = grid.Keys.Max(x => x.X);
+			var maxY = grid.Keys.Max(x => x.Y);
+
+			Dictionary<(int X, int Y), bool> newGrid = new();
+
+			for (int y = minY - 1; y <= maxY + 1; y++)
+			{
+				for (int x = minX - 1; x <= maxX + 1; x++)
+				{
+					var miniGrid = neighbourOffsets.Select(z => (z.X + x, z.Y + y)).ToList();
+					var binary = new string(miniGrid.Select(z => IsLit(z, minX + 1) ? '1' : '0').ToArray());
+					newGrid[(x, y)] = algorithm[Convert.ToInt32(binary, 2)] == '#';
+				}
+			}
+
+			grid = newGrid;
+		}
+
+		private static bool IsLit((int X, int Y) coord, int minX)
+		{
+			if (!grid.ContainsKey(coord) && minX % 2 == 0 && algorithm[0] == '#')
+			{
+				return true;
+			}
+			if (!grid.ContainsKey(coord))
+			{
+				return false;
+			}
+			return grid[coord];
+		}
+	}
+}
