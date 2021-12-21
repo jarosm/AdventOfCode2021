@@ -1,0 +1,122 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var input = File.ReadAllLines("input.txt");
+
+            int p1Pos = int.Parse(input[0].Replace(": ", ";").Split(';')[1]) - 1;
+            int p2Pos = int.Parse(input[1].Replace(": ", ";").Split(';')[1]) - 1;
+
+
+            // Part 1
+            int p1Score = 0, p2Score = 0;
+            int detDie = -1, count = 0;
+            bool player1 = true;
+            while (true)
+			{
+                int sum = 0;
+                for (int i = 0; i < 3; i++)
+				{
+                    detDie++;
+                    sum += (detDie % 100) + 1;
+                    count++;
+				}
+
+                if (player1)
+				{
+                    p1Pos = (p1Pos + sum) % 10;
+                    p1Score += p1Pos + 1;
+                    if (p1Score >= 1000)
+                        break;
+				}
+                else
+                {
+                    p2Pos = (p2Pos + sum) % 10;
+                    p2Score += p2Pos + 1;
+                    if (p2Score >= 1000)
+                        break;
+                }
+
+                player1 = !player1;
+			}
+            Console.WriteLine("Part 1: " + (p1Score >= 1000 ? p2Score * count : p1Score * count));
+
+
+            // Part 2
+            p1Pos = int.Parse(input[0].Replace(": ", ";").Split(';')[1]);
+            p2Pos = int.Parse(input[1].Replace(": ", ";").Split(';')[1]);
+            var result = DoPart2(p1Pos, p2Pos);
+            Console.WriteLine("Part 2: " + Math.Max(result.p1Wins, result.p2Wins));
+
+
+            Console.WriteLine("end");
+            Console.ReadLine();
+        }
+
+        private static (ulong p1Wins, ulong p2Wins) DoPart2(int p1Pos, int p2Pos)
+		{
+            ulong p1Wins = 0, p2Wins = 0;
+
+            var diceCombinations = new Dictionary<int, ulong>();
+            for (int i = 1; i < 4; i++)
+                for (int j = 1; j < 4; j++)
+                    for (int k = 1; k < 4; k++)
+					{
+                        int sum = i + j + k;
+                        if (diceCombinations.ContainsKey(sum))
+                            diceCombinations[sum] = diceCombinations[sum] + 1;
+                        else
+                            diceCombinations.Add(sum, 1);
+					}
+
+            var universes = new Dictionary<(int s1, int p1, int s2, int p2), ulong>();
+            universes.Add((0, p1Pos, 0, p2Pos), 1);
+            while (universes.Count > 0)
+			{
+                var nu = new Dictionary<(int s1, int p1, int s2, int p2), ulong>();
+
+                foreach (var u in universes)
+				{
+                    foreach (var d1 in diceCombinations)
+					{
+                        int p1 = (u.Key.p1 + d1.Key - 1) % 10 + 1;
+                        int s1 = u.Key.s1 + p1;
+                        if (s1 >= 21)
+						{
+                            p1Wins += u.Value * d1.Value;
+                            continue;
+                        }
+
+                        foreach (var d2 in diceCombinations)
+                        {
+                            int p2 = (u.Key.p2 + d2.Key - 1) % 10 + 1;
+                            int s2 = u.Key.s2 + p2;
+                            if (s2 >= 21)
+                            {
+                                p2Wins += u.Value * d1.Value * d2.Value;
+                                continue;
+                            }
+                            if (nu.ContainsKey((s1, p1, s2, p2)))
+                                nu[(s1, p1, s2, p2)] = nu[(s1, p1, s2, p2)] + u.Value * d1.Value * d2.Value;
+                            else
+                                nu.Add((s1, p1, s2, p2), u.Value * d1.Value * d2.Value);
+                        }
+					}
+				}
+
+                universes = nu;
+            }
+
+            return (p1Wins, p2Wins);
+        }
+
+    }
+}

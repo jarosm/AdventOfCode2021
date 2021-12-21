@@ -90,6 +90,7 @@
     <Content Include="Day18.txt" />
     <Content Include="Day19.txt" />
     <Content Include="Day20.txt" />
+    <Content Include="Day21.txt" />
     <Content Include="input.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
