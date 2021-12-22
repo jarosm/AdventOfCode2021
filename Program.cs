@@ -15,6 +15,5 @@ namespace AdventOfCode2021
             Console.WriteLine("end");
             Console.ReadLine();
         }
-
     }
 }

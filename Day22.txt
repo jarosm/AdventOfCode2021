@@ -1,0 +1,75 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var input = File.ReadAllLines("input.txt");
+
+
+            // Part 1 and 2
+            Console.WriteLine("Part 1: " + ProcessInput(input, true));
+            Console.WriteLine("Part 2: " + ProcessInput(input, false));
+
+
+            Console.WriteLine("end");
+            Console.ReadLine();
+        }
+
+        private static ulong ProcessInput(string[] input, bool part1)
+		{
+            var cubes = new List<(int x1, int x2, int y1, int y2, int z1, int z2)>();
+
+            foreach (string line in input)
+			{
+                bool state = line.Split(' ')[0] == "on" ? true : false;
+                int[] range = line.Split(' ')[1].Replace("x=", "").Replace("y=", "").Replace("z=", "").Replace("..", ",").Split(',').Select(int.Parse).ToArray();
+
+                if (part1 && (range[0] < -50 || range[1] > 50 || range[2] < -50 || range[3] > 50 || range[4] < -50 || range[5] > 50))
+                    continue;
+
+                int index = 0;
+                var newCubes = new List<(int x1, int x2, int y1, int y2, int z1, int z2)>();
+                while (index < cubes.Count)
+				{
+                    var cube = cubes[index];
+                    if (range[0] > cube.x2 || range[1] < cube.x1 || range[2] > cube.y2 || range[3] < cube.y1 || range[4] > cube.z2 || range[5] < cube.z1)
+					{
+                        index++;
+                        continue;
+					}
+
+                    cubes.RemoveAt(index);
+
+                    if (range[0] > cube.x1)
+                        newCubes.Add((cube.x1, range[0] - 1, cube.y1, cube.y2, cube.z1, cube.z2));
+                    if (range[1] < cube.x2)
+                        newCubes.Add((range[1] + 1, cube.x2, cube.y1, cube.y2, cube.z1, cube.z2));
+                    if (range[2] > cube.y1)
+                        newCubes.Add((Math.Max(cube.x1, range[0]), Math.Min(cube.x2, range[1]), cube.y1, range[2] - 1, cube.z1, cube.z2));
+                    if (range[3] < cube.y2)
+                        newCubes.Add((Math.Max(cube.x1, range[0]), Math.Min(cube.x2, range[1]), range[3] + 1, cube.y2, cube.z1, cube.z2));
+                    if (range[4] > cube.z1)
+                        newCubes.Add((Math.Max(cube.x1, range[0]), Math.Min(cube.x2, range[1]), Math.Max(cube.y1, range[2]), Math.Min(cube.y2, range[3]), cube.z1, range[4] - 1));
+                    if (range[5] < cube.z2)
+                        newCubes.Add((Math.Max(cube.x1, range[0]), Math.Min(cube.x2, range[1]), Math.Max(cube.y1, range[2]), Math.Min(cube.y2, range[3]), range[5] + 1, cube.z2));
+                }
+                if (state)
+                    newCubes.Add((range[0], range[1], range[2], range[3], range[4], range[5]));
+                cubes.AddRange(newCubes);
+            }
+
+            ulong count = 0;
+            foreach (var cube in cubes)
+                count += (ulong)(Math.Abs(cube.x2 - cube.x1) + 1) * (ulong)(Math.Abs(cube.y2 - cube.y1) + 1) * (ulong)(Math.Abs(cube.z2 - cube.z1) + 1);
+            return count;
+		}
+
+    }
+}
