@@ -1,4 +1,4 @@
-﻿inp w
+﻿inp w1
 mul x 0
 add x z
 mod x 26
@@ -15,8 +15,9 @@ mul y 0
 add y w
 add y 12
 mul y x
-add z y
-inp w
+add z y			w1 + 12
+
+inp w2
 mul x 0
 add x z
 mod x 26
@@ -33,8 +34,9 @@ mul y 0
 add y w
 add y 8
 mul y x
-add z y
-inp w
+add z y			(w1 + 12) * 26 + w2 + 8
+
+inp w3
 mul x 0
 add x z
 mod x 26
@@ -51,8 +53,9 @@ mul y 0
 add y w
 add y 7
 mul y x
-add z y
-inp w
+add z y			((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7
+
+inp w4
 mul x 0
 add x z
 mod x 26
@@ -69,13 +72,14 @@ mul y 0
 add y w
 add y 4
 mul y x
-add z y
-inp w
+add z y			(((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7) * 26 + w4 + 4
+
+inp w5
 mul x 0
 add x z
 mod x 26
-div z 26
-add x -11
+div z 26		((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7
+add x -11		w4 + 4 - 11 = w5 => w4 - 7 = w5 => w4 = [9,8] ; w5 = [2,1]
 eql x w
 eql x 0
 mul y 0
@@ -87,8 +91,9 @@ mul y 0
 add y w
 add y 4
 mul y x
-add z y
-inp w
+add z y			((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7
+
+inp w6
 mul x 0
 add x z
 mod x 26
@@ -105,13 +110,14 @@ mul y 0
 add y w
 add y 1
 mul y x
-add z y
-inp w
+add z y			(((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7) * 26 + w6 + 1
+
+inp w7
 mul x 0
 add x z
 mod x 26
-div z 26
-add x -1
+div z 26		((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7
+add x -1		w6 + 1 - 1 = w7 => w6 = w7 => w6 = [9..1] ; w7 = [9..1]
 eql x w
 eql x 0
 mul y 0
@@ -123,8 +129,9 @@ mul y 0
 add y w
 add y 10
 mul y x
-add z y
-inp w
+add z y			((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7
+
+inp w8
 mul x 0
 add x z
 mod x 26
@@ -141,13 +148,14 @@ mul y 0
 add y w
 add y 8
 mul y x
-add z y
-inp w
+add z y			(((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7) * 26 + w8 + 8
+
+inp w9
 mul x 0
 add x z
 mod x 26
-div z 26
-add x -3
+div z 26		((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7
+add x -3		w8 + 8 - 3 = w9 => w8 + 5 = w9 => w8 = [4,3,2,1] ; w9 = [9,8,7,6]
 eql x w
 eql x 0
 mul y 0
@@ -159,13 +167,14 @@ mul y 0
 add y w
 add y 12
 mul y x
-add z y
-inp w
+add z y			((w1 + 12) * 26 + w2 + 8) * 26 + w3 + 7
+
+inp w10
 mul x 0
 add x z
 mod x 26
-div z 26
-add x -4
+div z 26		(w1 + 12) * 26 + w2 + 8
+add x -4		w3 + 7 - 4 = w10 => w3 + 3 = w10 => w3 = [6,5,4,3,2,1] ; w10 = [9,8,7,6,5,4]
 eql x w
 eql x 0
 mul y 0
@@ -177,13 +186,14 @@ mul y 0
 add y w
 add y 10
 mul y x
-add z y
-inp w
+add z y			(w1 + 12) * 26 + w2 + 8
+
+inp w11
 mul x 0
 add x z
 mod x 26
-div z 26
-add x -13
+div z 26		w1 + 12
+add x -13		w2 + 8 - 13 = w11 => w2 - 5 = w11 => w2 = [9,8,7,6] ; w11 = [4,3,2,1]
 eql x w
 eql x 0
 mul y 0
@@ -195,13 +205,14 @@ mul y 0
 add y w
 add y 15
 mul y x
-add z y
-inp w
+add z y			w1 + 12
+
+inp w12
 mul x 0
 add x z
 mod x 26
-div z 26
-add x -8
+div z 26		0
+add x -8		w1 + 12 - 8 = w12 => w1 + 4 = w12 => w1 = [5,4,3,2,1] ; w12 = [9,8,7,6,5]
 eql x w
 eql x 0
 mul y 0
@@ -213,8 +224,9 @@ mul y 0
 add y w
 add y 4
 mul y x
-add z y
-inp w
+add z y			0
+
+inp w13
 mul x 0
 add x z
 mod x 26
@@ -231,13 +243,14 @@ mul y 0
 add y w
 add y 10
 mul y x
-add z y
-inp w
+add z y			w13 + 10
+
+inp w14
 mul x 0
 add x z
 mod x 26
-div z 26
-add x -11
+div z 26		0
+add x -11		w13 + 10 - 11 = w14 => w13 - 1 = w14 => w13 = [9..2] ; w14 = [8..1]
 eql x w
 eql x 0
 mul y 0
@@ -249,4 +262,4 @@ mul y 0
 add y w
 add y 9
 mul y x
-add z y
+add z y			0
