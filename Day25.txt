@@ -1,0 +1,93 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.IO;
+
+namespace AdventOfCode2021
+{
+    class Program
+    {
+        static int[,] floor;
+        static int maxX, maxY;
+
+        static void Main(string[] args)
+        {
+            var input = File.ReadAllLines("input.txt");
+
+            maxX = input[0].Length;
+            maxY = input.Length;
+            floor = new int[maxY, maxX];
+            for (int y = 0; y < maxY; y++)
+			{
+                for (int x = 0; x < maxX; x++)
+				{
+                    if (input[y][x] == '>')
+                        floor[y, x] = 1;
+                    else if (input[y][x] == 'v')
+                        floor[y, x] = 2;
+                    else
+                        floor[y, x] = 0;
+                }
+			}
+
+
+            // Part 1 (and only. It's day 25)
+            int steps = 0;
+            while (true)
+			{
+                int[,] temp;
+                temp = Step();
+                steps++;
+                if (Compare(temp))
+                    break;
+                floor = temp;
+			}
+            Console.WriteLine("Day 25: " + steps);
+
+
+            Console.WriteLine("end");
+            Console.ReadLine();
+        }
+
+        private static bool Compare(int[,] temp)
+		{
+            for (int y = 0; y < maxY; y++)
+            {
+                for (int x = 0; x < maxX; x++)
+                {
+                    if (floor[y, x] != temp[y, x])
+                        return false;
+                }
+            }
+            return true;
+		}
+
+        private static int[,] Step()
+		{
+            int[,] temp1 = new int[maxY, maxX], temp2 = new int[maxY, maxX];
+            for (int y = 0; y < maxY; y++)
+            {
+                for (int x = 0; x < maxX; x++)
+                {
+                    if (floor[y, x] == 1 && floor[y, (x + 1) % maxX] == 0)
+                        temp1[y, (x + 1) % maxX] = 1;
+                    else if (temp1[y, x] == 0)
+                        temp1[y, x] = floor[y, x];
+                }
+            }
+            for (int y = 0; y < maxY; y++)
+            {
+                for (int x = 0; x < maxX; x++)
+                {
+                    if (temp1[y, x] == 2 && temp1[(y + 1) % maxY, x] == 0)
+                        temp2[(y + 1) % maxY, x] = 2;
+                    else if (temp2[y, x] == 0)
+                        temp2[y, x] = temp1[y, x];
+                }
+            }
+            return temp2;
+		}
+
+    }
+}

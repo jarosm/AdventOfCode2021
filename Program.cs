@@ -8,6 +8,9 @@ namespace AdventOfCode2021
 {
     class Program
     {
+        static int[,] floor;
+        static int maxX, maxY;
+
         static void Main(string[] args)
         {
             var input = File.ReadAllLines("input.txt");
@@ -15,5 +18,6 @@ namespace AdventOfCode2021
             Console.WriteLine("end");
             Console.ReadLine();
         }
+
     }
 }
